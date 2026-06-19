@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Progress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 p-8 font-sans">
+    
+    <div class="max-w-4xl mx-auto">
+        <a href="/" class="text-indigo-500 hover:text-indigo-700 font-medium mb-6 inline-block">&larr; Back to Dashboard</a>
+
+        <h1 class="text-3xl font-bold mb-2 text-slate-900">Playlist Status</h1>
+        <p class="text-sm text-slate-400 font-mono mb-8">{{ playlist_id }}</p>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-slate-700">Course Completion</h3>
+            <div class="w-full bg-slate-100 rounded-full h-4 mb-2 overflow-hidden border border-slate-200">
+                <div class="bg-indigo-500 h-4 rounded-full transition-all duration-1000" 
+                     style="width: {{ (progress['watched_hours'] / progress['total_hours'] * 100) if progress['total_hours'] > 0 else 0 }}%">
+                </div>
+            </div>
+            <p class="text-right text-sm font-bold text-indigo-600">
+                {{ watched|length }} / {{ stats|length }} videos watched
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-slate-400">
+                <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">Total Content</p>
+                <p class="text-2xl font-bold text-slate-800">{{ progress['total_hours'] }} <span class="text-base font-normal text-slate-500">hrs</span></p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-400">
+                <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">Time Watched</p>
+                <p class="text-2xl font-bold text-slate-800">{{ progress['watched_hours'] }} <span class="text-base font-normal text-slate-500">hrs</span></p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-400">
+                <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">Remaining (1x)</p>
+                <p class="text-2xl font-bold text-slate-800">{{ progress['remaining_hours'] }} <span class="text-base font-normal text-slate-500">hrs</span></p>
+            </div>
+
+            <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-200 shadow-sm border-l-4 border-l-indigo-500 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 opacity-10">
+                    <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                </div>
+                <p class="text-xs text-indigo-600 uppercase tracking-wide font-bold mb-1">Real ETA (1.5x)</p>
+                <p class="text-2xl font-bold text-indigo-900">{{ progress['real_eta_hours_at_speed'] }} <span class="text-base font-normal text-indigo-700">hrs</span></p>
+            </div>
+
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-10">
+            <h3 class="text-lg font-semibold mb-4 text-slate-700">Course Content</h3>
+            <div class="space-y-2">
+                {% for vid_id, vid_info in stats.items() %}
+                <label class="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 transition rounded-lg border border-slate-200 cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox" 
+                               class="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                               {% if vid_id in watched %}checked{% endif %}
+                               onclick="toggleVideo('{{ vid_id }}', '{{ playlist_id }}', this.checked)">
+                        
+                        <span class="text-sm font-medium text-slate-700 line-clamp-1">
+                            {{ loop.index }}. {{ vid_info['title'] }}
+                        </span>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono whitespace-nowrap ml-4">
+                        {{ (vid_info['duration_seconds'] / 60)|round|int }} min
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+        function toggleVideo(videoId, playlistId, isChecked) {
+            fetch('/toggle', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    video_id: videoId,
+                    playlist_id: playlistId,
+                    is_checked: isChecked
+                })
+            }).then(() => {
+                // Reload the page smoothly to update the ETA math!
+                window.location.reload(); 
+            });
+        }
+        </script>
+</body>
+</html>
