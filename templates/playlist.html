@@ -5,92 +5,186 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlist Progress</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
-<body class="bg-slate-50 text-slate-800 p-8 font-sans">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 p-8 font-sans transition-colors duration-200">
     
-    <div class="max-w-4xl mx-auto">
-        <a href="/" class="text-indigo-500 hover:text-indigo-700 font-medium mb-6 inline-block">&larr; Back to Dashboard</a>
+    <div class="max-w-4xl mx-auto relative">
+        
+        <div class="flex justify-between items-center mb-6">
+            <a href="/" class="text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">&larr; Back to Dashboard</a>
+            <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition">
+                🌗 Toggle Theme
+            </button>
+        </div>
 
-        <h1 class="text-3xl font-bold mb-2 text-slate-900">Playlist Status</h1>
-        <p class="text-sm text-slate-400 font-mono mb-8">{{ playlist_id }}</p>
+        <h1 class="text-3xl font-bold mb-2 text-slate-900 dark:text-white">Playlist Status</h1>
+        <p class="text-sm text-slate-400 dark:text-slate-500 font-mono mb-8">{{ playlist_id }}</p>
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-            <h3 class="text-lg font-semibold mb-4 text-slate-700">Course Completion</h3>
-            <div class="w-full bg-slate-100 rounded-full h-4 mb-2 overflow-hidden border border-slate-200">
-                <div class="bg-indigo-500 h-4 rounded-full transition-all duration-1000" 
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-8 transition-colors">
+            <h3 class="text-lg font-semibold mb-4 text-slate-700 dark:text-slate-200">Course Completion</h3>
+            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-4 mb-2 overflow-hidden border border-slate-200 dark:border-slate-600">
+                <div class="bg-indigo-500 dark:bg-indigo-400 h-4 rounded-full transition-all duration-1000" 
                      style="width: {{ (progress['watched_hours'] / progress['total_hours'] * 100) if progress['total_hours'] > 0 else 0 }}%">
                 </div>
             </div>
-            <p class="text-right text-sm font-bold text-indigo-600">
+            <p class="text-right text-sm font-bold text-indigo-600 dark:text-indigo-400">
                 {{ watched|length }} / {{ stats|length }} videos watched
             </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-slate-400">
-                <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">Total Content</p>
-                <p class="text-2xl font-bold text-slate-800">{{ progress['total_hours'] }} <span class="text-base font-normal text-slate-500">hrs</span></p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-slate-400 transition-colors">
+                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide font-bold mb-1">Total Content</p>
+                <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ progress['total_hours'] }} <span class="text-base font-normal text-slate-500 dark:text-slate-400">hrs</span></p>
             </div>
 
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-emerald-400">
-                <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">Time Watched</p>
-                <p class="text-2xl font-bold text-slate-800">{{ progress['watched_hours'] }} <span class="text-base font-normal text-slate-500">hrs</span></p>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-emerald-400 transition-colors">
+                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide font-bold mb-1">Time Watched</p>
+                <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ progress['watched_hours'] }} <span class="text-base font-normal text-slate-500 dark:text-slate-400">hrs</span></p>
             </div>
 
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-400">
-                <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">Remaining (1x)</p>
-                <p class="text-2xl font-bold text-slate-800">{{ progress['remaining_hours'] }} <span class="text-base font-normal text-slate-500">hrs</span></p>
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm border-l-4 border-l-amber-400 transition-colors">
+                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide font-bold mb-1">Remaining (1x)</p>
+                <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ progress['remaining_hours'] }} <span class="text-base font-normal text-slate-500 dark:text-slate-400">hrs</span></p>
             </div>
-
-            <div class="bg-indigo-50 p-5 rounded-xl border border-indigo-200 shadow-sm border-l-4 border-l-indigo-500 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 opacity-10">
-                    <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
-                </div>
-                <p class="text-xs text-indigo-600 uppercase tracking-wide font-bold mb-1">Real ETA (1.5x)</p>
-                <p class="text-2xl font-bold text-indigo-900">{{ progress['real_eta_hours_at_speed'] }} <span class="text-base font-normal text-indigo-700">hrs</span></p>
-            </div>
-
         </div>
-    </div>
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-10">
-            <h3 class="text-lg font-semibold mb-4 text-slate-700">Course Content</h3>
-            <div class="space-y-2">
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-8 transition-colors">
+            <h3 class="text-lg font-semibold mb-4 text-slate-700 dark:text-slate-200">Custom Study Plan</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
+                        Playback Speed: <span id="speed-val" class="font-bold text-indigo-600 dark:text-indigo-400">1x</span>
+                    </label>
+                    <input type="range" id="playback-speed" min="0.5" max="2.5" step="0.25" value="1" 
+                           class="w-full cursor-pointer accent-indigo-600" oninput="calculatePlan()">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">
+                        Daily Study Time (minutes)
+                    </label>
+                    <input type="number" id="daily-mins" value="60" min="10" 
+                           class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors" 
+                           oninput="calculatePlan()">
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg border border-indigo-100 dark:border-indigo-800 flex items-center justify-between transition-colors">
+                <p class="text-slate-700 dark:text-slate-300 font-medium">At this pace, you will finish the remaining lectures in:</p>
+                <p class="text-2xl font-bold text-indigo-700 dark:text-indigo-400"><span id="custom-days">--</span> Days</p>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-10 transition-colors">
+            <h3 class="text-lg font-semibold mb-4 text-slate-700 dark:text-slate-200">Course Content</h3>
+            <div class="space-y-4">
                 {% for vid_id, vid_info in stats.items() %}
-                <label class="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 transition rounded-lg border border-slate-200 cursor-pointer">
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox" 
-                               class="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
-                               {% if vid_id in watched %}checked{% endif %}
-                               onclick="toggleVideo('{{ vid_id }}', '{{ playlist_id }}', this.checked)">
-                        
-                        <span class="text-sm font-medium text-slate-700 line-clamp-1">
-                            {{ loop.index }}. {{ vid_info['title'] }}
+                <div class="p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition rounded-lg border border-slate-200 dark:border-slate-600 block">
+                    <label class="flex items-center justify-between cursor-pointer mb-2">
+                        <div class="flex items-center gap-4">
+                            <input type="checkbox" 
+                                id="cb-{{ vid_id }}"
+                                class="video-cb w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                                data-duration="{{ vid_info['duration_seconds'] }}"
+                                {% if vid_id in watched %}checked{% endif %}
+                                onclick="toggleVideo('{{ vid_id }}', '{{ playlist_id }}', this.checked)">
+                            
+                            <a href="https://www.youtube.com/watch?v={{ vid_id }}" 
+                               target="_blank" 
+                               onclick="autoTick(event, '{{ vid_id }}', '{{ playlist_id }}')" 
+                               class="text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-500 dark:hover:text-indigo-400 hover:underline line-clamp-1">
+                                {{ loop.index }}. {{ vid_info['title'] }}
+                            </a>
+                        </div>
+                        <span class="text-xs text-slate-400 dark:text-slate-400 font-mono whitespace-nowrap ml-4">
+                            {{ (vid_info['duration_seconds'] / 60)|round|int }} min
                         </span>
+                    </label>
+                    
+                    <div class="pl-9 pr-2">
+                        <textarea id="note-{{ vid_id }}" 
+                                  placeholder="write down your notes here" 
+                                  class="w-full text-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:text-white transition shadow-inner" 
+                                  onblur="saveNote('{{ vid_id }}', '{{ playlist_id }}')">{{ notes.get(vid_id, '') }}</textarea>
                     </div>
-                    <span class="text-xs text-slate-400 font-mono whitespace-nowrap ml-4">
-                        {{ (vid_info['duration_seconds'] / 60)|round|int }} min
-                    </span>
-                </label>
+                </div>
                 {% endfor %}
             </div>
         </div>
 
-        <script>
-        function toggleVideo(videoId, playlistId, isChecked) {
+    </div> 
+
+    <script>
+    // Theme Engine
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+
+    // ETA Engine
+    function calculatePlan() {
+        const speed = parseFloat(document.getElementById('playback-speed').value);
+        const dailyMins = parseInt(document.getElementById('daily-mins').value);
+        document.getElementById('speed-val').innerText = speed + 'x';
+        
+        let remainingSeconds = 0;
+        document.querySelectorAll('.video-cb').forEach(cb => {
+            if (!cb.checked) remainingSeconds += parseInt(cb.getAttribute('data-duration'));
+        });
+        
+        if (remainingSeconds === 0) {
+            document.getElementById('custom-days').innerText = "0";
+            return;
+        }
+        
+        document.getElementById('custom-days').innerText = Math.ceil((remainingSeconds / speed / 60) / dailyMins);
+    }
+    document.addEventListener('DOMContentLoaded', calculatePlan);
+
+    // Standard Checkbox Toggle
+    function toggleVideo(videoId, playlistId, isChecked) {
+        fetch('/toggle', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ video_id: videoId, playlist_id: playlistId, is_checked: isChecked })
+        }).then(() => { setTimeout(() => { window.location.reload(); }, 100); });
+    }
+
+    // Auto-Tick when clicking the link
+    function autoTick(e, videoId, playlistId) {
+        e.stopPropagation();
+        const cb = document.getElementById('cb-' + videoId);
+        if (!cb.checked) {
+            cb.checked = true;
             fetch('/toggle', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    video_id: videoId,
-                    playlist_id: playlistId,
-                    is_checked: isChecked
-                })
+                body: JSON.stringify({ video_id: videoId, playlist_id: playlistId, is_checked: true })
             }).then(() => {
-                // Reload the page smoothly to update the ETA math!
-                window.location.reload(); 
+                setTimeout(() => { window.location.reload(); }, 500); 
             });
         }
-        </script>
+    }
+
+    // Background Note Saving
+    function saveNote(videoId, playlistId) {
+        const text = document.getElementById('note-' + videoId).value;
+        fetch('/save_note', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ video_id: videoId, playlist_id: playlistId, note_text: text })
+        });
+    }
+    </script>
 </body>
 </html>
